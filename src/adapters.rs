@@ -12,7 +12,7 @@ export!(
     any,      //
     attempt,  //
     either,   //
-    eof,      //
+    end,      //
     expect,   //
     fail,     //
     many,     //

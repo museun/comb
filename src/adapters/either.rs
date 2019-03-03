@@ -1,6 +1,8 @@
 use crate::*;
 
 pub use Either::*;
+
+/// *Left* and *Right* kinds for an [Either<L,R>](crate::Either) type. This acts as an combinator
 pub enum Either<L, R>
 where
     L: Scanner,

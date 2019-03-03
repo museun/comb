@@ -3,14 +3,24 @@ use crate::*;
 #[allow(type_alias_bounds)] // not yet
 pub(crate) type Res<T: Scanner> = Result<T::Output, T::Input>;
 
+/// Expected are invariants on the matching state of the combinator
+///
+/// [Any](crate::Expected::Any) is when *any* state was to be produced
+///
+/// [End](crate::Expected::End) is when the *end* was expected
+///
+/// [Token(E)](crate::Expected::Token) is when the Token, `e` was expected
+///
+/// [Unknown](crate::Expected::Unknown) is when an unknown state was entered (a catch-all)
 #[derive(Debug, PartialEq, Clone)]
 pub enum Expected<E> {
     Any,
-    Eof,
+    End,
     Token(E),
     Unknown,
 }
 
+/// Positional error produced from the [Expected](crate::Expected) states
 #[derive(Debug, PartialEq, Clone)]
 pub struct Error<E> {
     pub(crate) pos: usize,
