@@ -13,7 +13,7 @@ impl<A: Scanner> Scanner for Many<A> {
     type Input = A::Input;
     type Output = Vec<A::Output>;
 
-    fn scan(&self, stream: &mut Stream<Self::Input>) -> ScannerResult<Self::Output, Self::Input> {
+    fn scan(&self, stream: &mut Stream<Self::Input>) -> Res<Self> {
         let mut res = vec![];
         for i in 0.. {
             if let Some(y) = self.2 {

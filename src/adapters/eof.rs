@@ -14,7 +14,7 @@ impl<T: Clone> Scanner for Eof<T> {
     type Input = T;
     type Output = ();
 
-    fn scan(&self, stream: &mut Stream<Self::Input>) -> ScannerResult<Self::Output, Self::Input> {
+    fn scan(&self, stream: &mut Stream<Self::Input>) -> Res<Self> {
         if let Some(tok) = stream.peek() {
             Err(Error::new(stream.pos(), Some(tok), Expected::Eof))
         } else {

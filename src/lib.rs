@@ -4,10 +4,9 @@ pub use self::stream::Stream;
 mod scanner;
 pub use self::scanner::Scanner;
 
-mod either;
-pub use self::either::{Left, Right};
-
 pub mod adapters;
+
+pub(crate) use self::adapters::*;
 
 #[macro_export]
 macro_rules! or  {
@@ -19,7 +18,10 @@ macro_rules! or  {
     }
 }
 
-pub type ScannerResult<O, I> = std::result::Result<O, Error<I>>;
+pub type Result<O, I> = std::result::Result<O, Error<I>>;
+
+#[allow(type_alias_bounds)] // not yet
+pub(crate) type Res<T: Scanner> = Result<T::Output, T::Input>;
 
 #[derive(Debug, PartialEq, Clone)]
 pub enum Expected<E> {
@@ -58,41 +60,41 @@ impl<E: std::fmt::Debug> std::fmt::Display for Error<E> {
 
 impl<E: std::fmt::Debug> std::error::Error for Error<E> {}
 
-pub fn scan_with<F, A, B>(f: F) -> self::adapters::ScanWith<F, A, B>
+pub fn scan_with<F, A, B>(f: F) -> ScanWith<F, A, B>
 where
-    F: Fn(&mut Stream<A>) -> ScannerResult<B, A>,
+    F: Fn(&mut Stream<A>) -> Result<B, A>,
 {
-    self::adapters::ScanWith::new(f)
+    ScanWith::new(f)
 }
 
-pub fn any<T: Clone>() -> self::adapters::Any<T> {
-    self::adapters::Any::new()
+pub fn any<T: Clone>() -> Any<T> {
+    Any::new()
 }
 
-pub fn value<T: Clone, I>(x: T) -> self::adapters::Value<T, I> {
-    self::adapters::Value::new(x)
+pub fn value<T: Clone, I>(x: T) -> Value<T, I> {
+    Value::new(x)
 }
 
-pub fn eof<T: Clone>() -> self::adapters::Eof<T> {
-    self::adapters::Eof::new()
+pub fn eof<T: Clone>() -> Eof<T> {
+    Eof::new()
 }
 
-pub fn expect<T: Clone, F: Fn(&T) -> bool>(f: F) -> self::adapters::Expect<T, F> {
-    self::adapters::Expect::new(f)
+pub fn expect<T: Clone, F: Fn(&T) -> bool>(f: F) -> Expect<T, F> {
+    Expect::new(f)
 }
 
-pub fn fail<A: Clone, B>() -> self::adapters::Fail<A, B> {
-    self::adapters::Fail::new()
+pub fn fail<A: Clone, B>() -> Fail<A, B> {
+    Fail::new()
 }
 
-pub fn token<A: Clone + PartialEq>(a: A) -> self::adapters::Token<A> {
-    self::adapters::Token::new(a)
+pub fn token<A: Clone + PartialEq>(a: A) -> Token<A> {
+    Token::new(a)
 }
 
-pub fn tokens<I, A>(iter: I) -> self::adapters::Tokens<A>
+pub fn tokens<I, A>(iter: I) -> Tokens<A>
 where
     I: IntoIterator<Item = A>,
     A: Clone + PartialEq,
 {
-    self::adapters::Tokens::new(iter.into_iter().collect())
+    Tokens::new(iter.into_iter().collect())
 }

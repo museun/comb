@@ -14,7 +14,7 @@ impl<A: Clone, B> Scanner for Fail<A, B> {
     type Input = A;
     type Output = B;
 
-    fn scan(&self, stream: &mut Stream<Self::Input>) -> ScannerResult<Self::Output, Self::Input> {
+    fn scan(&self, stream: &mut Stream<Self::Input>) -> Res<Self> {
         Err(Error::new(
             stream.pos(),
             stream.peek().map(Some).unwrap_or_else(|| None),

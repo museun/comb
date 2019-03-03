@@ -17,7 +17,7 @@ where
 {
     type Input = L::Input;
     type Output = L::Output;
-    fn scan(&self, stream: &mut Stream<Self::Input>) -> ScannerResult<Self::Output, Self::Input> {
+    fn scan(&self, stream: &mut Stream<Self::Input>) -> Res<Self> {
         match self {
             Either::Left(left) => left.scan(stream),
             Either::Right(right) => right.scan(stream),

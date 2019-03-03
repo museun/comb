@@ -24,7 +24,7 @@ where
     type Input = A::Input;
     type Output = B::Output;
 
-    fn scan(&self, stream: &mut Stream<Self::Input>) -> ScannerResult<Self::Output, Self::Input> {
+    fn scan(&self, stream: &mut Stream<Self::Input>) -> Res<Self> {
         self.0.scan(stream)?;
         self.1.scan(stream)
     }

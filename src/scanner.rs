@@ -1,12 +1,11 @@
-use crate::adapters::*;
 use crate::stream::Stream;
-use crate::{Expected, ScannerResult};
+use crate::*;
 
 pub trait Scanner {
     type Input;
     type Output;
 
-    fn scan(&self, stream: &mut Stream<Self::Input>) -> ScannerResult<Self::Output, Self::Input>;
+    fn scan(&self, stream: &mut Stream<Self::Input>) -> Result<Self::Output, Self::Input>;
 
     fn map<T, F>(self, f: F) -> Map<T, Self, F>
     where
@@ -112,7 +111,7 @@ impl<A: Scanner> Scanner for Box<A> {
     type Input = A::Input;
     type Output = A::Output;
 
-    fn scan(&self, stream: &mut Stream<Self::Input>) -> ScannerResult<Self::Output, Self::Input> {
+    fn scan(&self, stream: &mut Stream<Self::Input>) -> Res<Self> {
         (**self).scan(stream)
     }
 }
@@ -121,7 +120,7 @@ impl<A: Scanner> Scanner for &A {
     type Input = A::Input;
     type Output = A::Output;
 
-    fn scan(&self, stream: &mut Stream<Self::Input>) -> ScannerResult<Self::Output, Self::Input> {
+    fn scan(&self, stream: &mut Stream<Self::Input>) -> Res<Self> {
         (**self).scan(stream)
     }
 }
@@ -130,7 +129,7 @@ impl<A: Scanner> Scanner for &mut A {
     type Input = A::Input;
     type Output = A::Output;
 
-    fn scan(&self, stream: &mut Stream<Self::Input>) -> ScannerResult<Self::Output, Self::Input> {
+    fn scan(&self, stream: &mut Stream<Self::Input>) -> Res<Self> {
         (**self).scan(stream)
     }
 }

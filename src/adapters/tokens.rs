@@ -13,7 +13,7 @@ impl<A: Clone + PartialEq> Scanner for Tokens<A> {
     type Input = A;
     type Output = Vec<A>;
 
-    fn scan(&self, stream: &mut Stream<Self::Input>) -> ScannerResult<Self::Output, Self::Input> {
+    fn scan(&self, stream: &mut Stream<Self::Input>) -> Res<Self> {
         let mut list = vec![];
         for item in self.0.iter() {
             let res = stream

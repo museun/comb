@@ -15,7 +15,7 @@ where
     type Input = A::Input;
     type Output = A::Output;
 
-    fn scan(&self, stream: &mut Stream<Self::Input>) -> ScannerResult<Self::Output, Self::Input> {
+    fn scan(&self, stream: &mut Stream<Self::Input>) -> Res<Self> {
         self.0.scan(stream).map_err(|mut err| {
             err.expected = self.1.clone();
             err

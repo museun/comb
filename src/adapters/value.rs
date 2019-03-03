@@ -14,7 +14,7 @@ impl<T: Clone, I> Scanner for Value<T, I> {
     type Input = I;
     type Output = T;
 
-    fn scan(&self, _: &mut Stream<Self::Input>) -> ScannerResult<Self::Output, Self::Input> {
+    fn scan(&self, _: &mut Stream<Self::Input>) -> Res<Self> {
         Ok(self.0.clone())
     }
 }

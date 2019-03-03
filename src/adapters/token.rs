@@ -13,7 +13,7 @@ impl<A: Clone + PartialEq> Scanner for Token<A> {
     type Input = A;
     type Output = A;
 
-    fn scan(&self, stream: &mut Stream<Self::Input>) -> ScannerResult<Self::Output, Self::Input> {
+    fn scan(&self, stream: &mut Stream<Self::Input>) -> Res<Self> {
         let res = stream
             .peek()
             .ok_or_else(|| Error::new(stream.pos(), None, Expected::Token(self.0.clone())))?;

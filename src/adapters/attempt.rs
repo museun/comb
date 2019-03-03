@@ -13,7 +13,7 @@ impl<A: Scanner> Scanner for Attempt<A> {
     type Input = A::Input;
     type Output = A::Output;
 
-    fn scan(&self, stream: &mut Stream<Self::Input>) -> ScannerResult<Self::Output, Self::Input> {
+    fn scan(&self, stream: &mut Stream<Self::Input>) -> Res<Self> {
         let pos = stream.pos();
         let res = self.0.scan(stream);
         if res.is_err() {
