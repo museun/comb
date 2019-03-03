@@ -61,7 +61,21 @@ pub trait Scanner {
     where
         Self: Sized,
     {
-        Many::new(self)
+        Many::new(self, None, None)
+    }
+
+    fn many1(self) -> Many<Self>
+    where
+        Self: Sized,
+    {
+        Many::new(self, Some(1), None)
+    }
+
+    fn many_n(self, n: usize) -> Many<Self>
+    where
+        Self: Sized,
+    {
+        Many::new(self, Some(n), Some(n))
     }
 
     fn with<T>(self, x: T) -> With<Self, T>
@@ -78,8 +92,11 @@ pub trait Scanner {
     {
         self.with(crate::value(x))
     }
-
-    // TODO many1, many_n
+    // need a:
+    // message
+    // error
+    // many1
+    // many_n
 }
 
 impl<A: Scanner> Scanner for Box<A> {

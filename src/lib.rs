@@ -130,89 +130,27 @@ where
     self::adapters::Tokens::new(iter.into_iter().collect())
 }
 
-#[cfg(test)]
-mod tests {
-    use super::*;
+pub use Either::*;
+pub enum Either<L, R>
+where
+    L: Scanner,
+    R: Scanner<Input = L::Input, Output = L::Output>,
+{
+    Left(L),
+    Right(R),
+}
 
-    fn tester<A: Scanner, I>(scanner: A, table: I)
-    where
-        I: IntoIterator<Item = (Vec<A::Input>, ScannerResult<A::Output, A::Input>, usize)>,
-        A::Input: PartialEq + std::fmt::Debug,
-        A::Output: PartialEq + std::fmt::Debug,
-    {
-        for (input, result, pos) in table {
-            let mut stream = Stream::new(input);
-            assert_eq!(result, scanner.scan(&mut stream));
-            assert_eq!(pos, stream.pos())
+impl<L, R> Scanner for Either<L, R>
+where
+    L: Scanner,
+    R: Scanner<Input = L::Input, Output = L::Output>,
+{
+    type Input = L::Input;
+    type Output = L::Output;
+    fn scan(&self, stream: &mut Stream<Self::Input>) -> ScannerResult<Self::Output, Self::Input> {
+        match self {
+            Either::Left(left) => left.scan(stream),
+            Either::Right(right) => right.scan(stream),
         }
-    }
-
-    #[test]
-    fn map_test() {
-        tester(
-            token(1).map(|x| x + 1),
-            vec![
-                (vec![1], Ok(2), 1),
-                (vec![2], Err(Error::new(0, Some(2), Expected::Token(1))), 0),
-            ],
-        )
-    }
-
-    #[test]
-    fn or_test() {
-        tester(
-            token(1).or(token(2)),
-            vec![
-                (vec![1], Ok(1), 1),
-                (vec![2], Ok(2), 1),
-                (vec![3], Err(Error::new(0, Some(3), Expected::Token(2))), 0),
-            ],
-        );
-
-        tester(
-            tokens(vec![1, 2]).or(tokens(vec![1, 3])),
-            vec![
-                (
-                    vec![1, 3],
-                    Err(Error::new(1, Some(3), Expected::Token(2))),
-                    1,
-                ),
-                (
-                    vec![1, 1, 3],
-                    Err(Error::new(1, Some(1), Expected::Token(2))),
-                    1,
-                ),
-            ],
-        );
-    }
-
-    #[test]
-    #[ignore]
-    fn and_test() {
-        unimplemented!()
-    }
-
-    #[test]
-    #[ignore]
-    fn skip_test() {
-        unimplemented!()
-    }
-
-    #[test]
-    #[ignore]
-    fn optional_test() {
-        unimplemented!()
-    }
-
-    #[test]
-    #[ignore]
-    fn then_test() {
-        unimplemented!()
-    }
-
-    #[test]
-    #[ignore]
-    fn many_test() {
-        unimplemented!()
     }
 }
