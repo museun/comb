@@ -1,15 +1,27 @@
 use crate::*;
 use std::marker::PhantomData;
 
-pub struct Map<O, T: Scanner, F: Fn(T::Output) -> O>(F, T, PhantomData<O>);
+#[derive(Debug, Clone)]
+pub struct Map<O, T, F>(F, T, PhantomData<O>)
+where
+    T: Scanner,
+    F: Fn(T::Output) -> O;
 
-impl<O, T: Scanner, F: Fn(T::Output) -> O> Map<O, T, F> {
+impl<O, T, F> Map<O, T, F>
+where
+    T: Scanner,
+    F: Fn(T::Output) -> O
+ {
     pub(crate) fn new(f: F, x: T) -> Self {
         Self(f, x, PhantomData)
     }
 }
 
-impl<O, T: Scanner, F: Fn(T::Output) -> O> Scanner for Map<O, T, F> {
+impl<O, T, F> Scanner for Map<O, T, F> 
+where
+    T: Scanner,
+    F: Fn(T::Output) -> O
+{
     type Input = T::Input;
     type Output = O;
 

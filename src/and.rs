@@ -1,5 +1,6 @@
 use crate::*;
 
+#[derive(Debug, Clone)]
 pub struct And<A, B>(A, B)
 where
     A: Scanner,

@@ -1,7 +1,7 @@
 use crate::*;
 use std::marker::PhantomData;
 
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub struct Eof<T: Clone>(PhantomData<T>);
 
 impl<T: Clone> Eof<T> {
@@ -16,7 +16,7 @@ impl<T: Clone> Scanner for Eof<T> {
 
     fn scan(&self, stream: &mut Stream<Self::Input>) -> ScannerResult<Self::Output, Self::Input> {
         if let Some(tok) = stream.peek() {
-            Err(ScannerError::new(stream.pos(), Some(tok), Expected::Eof))
+            Err(Error::new(stream.pos(), Some(tok), Expected::Eof))
         } else {
             Ok(())
         }

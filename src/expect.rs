@@ -16,17 +16,13 @@ impl<T: Clone, F: Fn(&T) -> bool> Scanner for Expect<T, F> {
     fn scan(&self, stream: &mut Stream<Self::Input>) -> ScannerResult<Self::Output, Self::Input> {
         let val = stream
             .peek()
-            .ok_or_else(|| ScannerError::new(stream.pos(), None, Expected::Unknown))?;
+            .ok_or_else(|| Error::new(stream.pos(), None, Expected::Unknown))?;
 
         if self.0(&val) {
             stream.next();
             Ok(val)
         } else {
-            Err(ScannerError::new(
-                stream.pos(),
-                Some(val),
-                Expected::Unknown,
-            ))
+            Err(Error::new(stream.pos(), Some(val), Expected::Unknown))
         }
     }
 }

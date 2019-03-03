@@ -1,6 +1,7 @@
 use crate::*;
 use std::marker::PhantomData;
 
+#[derive(Debug, Clone)]
 pub struct Then<A, F, B>(A, F, PhantomData<B>)
 where
     A: Scanner,

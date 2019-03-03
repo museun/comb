@@ -1,6 +1,7 @@
 use crate::*;
 use std::marker::PhantomData;
 
+#[derive(Debug, Clone)]
 pub struct Any<T: Clone>(PhantomData<T>);
 
 impl<T: Clone> Any<T> {
@@ -16,7 +17,7 @@ impl<T: Clone> Scanner for Any<T> {
     fn scan(&self, stream: &mut Stream<Self::Input>) -> ScannerResult<Self::Output, Self::Input> {
         let val = stream
             .peek()
-            .ok_or_else(|| ScannerError::new(stream.pos(), None, Expected::Any))?;
+            .ok_or_else(|| Error::new(stream.pos(), None, Expected::Any))?;
         stream.next();
         Ok(val)
     }

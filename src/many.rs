@@ -1,5 +1,6 @@
 use crate::*;
 
+#[derive(Debug, Clone)]
 pub struct Many<A: Scanner>(A);
 
 impl<A: Scanner> Many<A> {

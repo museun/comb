@@ -16,6 +16,7 @@ mod any;
 mod eof;
 mod expect;
 mod fail;
+mod scanwith;
 mod token;
 mod tokens;
 
@@ -32,11 +33,22 @@ pub mod adapters {
     pub use super::eof::*;
     pub use super::expect::*;
     pub use super::fail::*;
+    pub use super::scanwith::*;
     pub use super::token::*;
     pub use super::tokens::*;
 }
 
-pub type ScannerResult<O, I> = std::result::Result<O, ScannerError<I>>;
+#[macro_export]
+macro_rules! or  {
+    ($e:expr) => {
+        $x
+    };
+    ($x:expr, $($xs:tt)+) => {
+        $x.or(or!($($xs)+))
+    }
+}
+
+pub type ScannerResult<O, I> = std::result::Result<O, Error<I>>;
 
 #[derive(Debug, PartialEq, Clone)]
 pub enum Expected<E> {
@@ -47,20 +59,39 @@ pub enum Expected<E> {
 }
 
 #[derive(Debug, PartialEq, Clone)]
-pub struct ScannerError<E> {
+pub struct Error<E> {
     pos: usize,
     unexpected: Option<E>,
     expected: Expected<E>,
 }
 
-impl<E> ScannerError<E> {
+impl<E> Error<E> {
     pub(crate) fn new(pos: usize, unexpected: Option<E>, expected: Expected<E>) -> Self {
-        Self {
+        Error {
             pos,
             unexpected,
             expected,
         }
     }
+}
+
+impl<E: std::fmt::Debug> std::fmt::Display for Error<E> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(
+            f,
+            "unexpected {:?}. expected {:?} at {}",
+            self.unexpected, self.expected, self.pos
+        )
+    }
+}
+
+impl<E: std::fmt::Debug> std::error::Error for Error<E> {}
+
+pub fn scan_with<F, A, B>(f: F) -> self::adapters::ScanWith<F, A, B>
+where
+    F: Fn(&mut Stream<A>) -> ScannerResult<B, A>,
+{
+    self::adapters::ScanWith::new(f)
 }
 
 pub fn any<T: Clone>() -> self::adapters::Any<T> {
@@ -114,11 +145,7 @@ mod tests {
             token(1).map(|x| x + 1),
             vec![
                 (vec![1], Ok(2), 1),
-                (
-                    vec![2],
-                    Err(ScannerError::new(0, Some(2), Expected::Token(1))),
-                    0,
-                ),
+                (vec![2], Err(Error::new(0, Some(2), Expected::Token(1))), 0),
             ],
         )
     }
@@ -130,11 +157,7 @@ mod tests {
             vec![
                 (vec![1], Ok(1), 1),
                 (vec![2], Ok(2), 1),
-                (
-                    vec![3],
-                    Err(ScannerError::new(0, Some(3), Expected::Token(2))),
-                    0,
-                ),
+                (vec![3], Err(Error::new(0, Some(3), Expected::Token(2))), 0),
             ],
         );
 
@@ -143,12 +166,12 @@ mod tests {
             vec![
                 (
                     vec![1, 3],
-                    Err(ScannerError::new(1, Some(3), Expected::Token(2))),
+                    Err(Error::new(1, Some(3), Expected::Token(2))),
                     1,
                 ),
                 (
                     vec![1, 1, 3],
-                    Err(ScannerError::new(1, Some(1), Expected::Token(2))),
+                    Err(Error::new(1, Some(1), Expected::Token(2))),
                     1,
                 ),
             ],

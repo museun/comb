@@ -1,5 +1,6 @@
 use crate::*;
 
+#[derive(Debug, Clone)]
 pub struct Optional<A: Scanner>(A);
 
 impl<A: Scanner> Optional<A> {
