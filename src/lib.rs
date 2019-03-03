@@ -4,43 +4,7 @@ pub use self::stream::Stream;
 mod scanner;
 pub use self::scanner::Scanner;
 
-mod and;
-mod many;
-mod map;
-mod optional;
-mod or;
-mod skip;
-mod then;
-mod value;
-mod with;
-
-mod any;
-mod eof;
-mod expect;
-mod fail;
-mod scanwith;
-mod token;
-mod tokens;
-
-pub mod adapters {
-    pub use super::and::*;
-    pub use super::many::*;
-    pub use super::map::*;
-    pub use super::optional::*;
-    pub use super::or::*;
-    pub use super::skip::*;
-    pub use super::then::*;
-    pub use super::value::*;
-    pub use super::with::*;
-
-    pub use super::any::*;
-    pub use super::eof::*;
-    pub use super::expect::*;
-    pub use super::fail::*;
-    pub use super::scanwith::*;
-    pub use super::token::*;
-    pub use super::tokens::*;
-}
+pub mod adapters;
 
 #[macro_export]
 macro_rules! or  {

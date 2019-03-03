@@ -1,6 +1,6 @@
 use crate::adapters::*;
 use crate::stream::Stream;
-use crate::ScannerResult;
+use crate::{Expected, ScannerResult};
 
 pub trait Scanner {
     type Input;
@@ -57,7 +57,6 @@ pub trait Scanner {
     }
 
     fn many(self) -> Many<Self>
-    // we'll only use 1 many, so no need to split the types
     where
         Self: Sized,
     {
@@ -92,11 +91,18 @@ pub trait Scanner {
     {
         self.with(crate::value(x))
     }
+
+    fn message(self, msg: Expected<Self::Input>) -> Message<Self>
+    where
+        Self: Sized,
+        Self::Input: Clone,
+    {
+        Message::new(self, msg)
+    }
+
     // need a:
     // message
     // error
-    // many1
-    // many_n
 }
 
 impl<A: Scanner> Scanner for Box<A> {
