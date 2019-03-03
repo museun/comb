@@ -9,6 +9,12 @@ pub use Either::{Left, Right};
 
 pub(crate) use self::adapters::*;
 
+mod error;
+pub(crate) use self::error::Res;
+pub use self::error::{Error, Expected};
+
+pub type Result<O, I> = std::result::Result<O, Error<I>>;
+
 #[macro_export]
 macro_rules! or  {
     ($x:expr) => {
@@ -19,48 +25,6 @@ macro_rules! or  {
     }
 }
 
-pub type Result<O, I> = std::result::Result<O, Error<I>>;
-
-#[allow(type_alias_bounds)] // not yet
-pub(crate) type Res<T: Scanner> = Result<T::Output, T::Input>;
-
-#[derive(Debug, PartialEq, Clone)]
-pub enum Expected<E> {
-    Any,
-    Eof,
-    Token(E),
-    Unknown,
-}
-
-#[derive(Debug, PartialEq, Clone)]
-pub struct Error<E> {
-    pos: usize,
-    unexpected: Option<E>,
-    expected: Expected<E>,
-}
-
-impl<E> Error<E> {
-    pub(crate) fn new(pos: usize, unexpected: Option<E>, expected: Expected<E>) -> Self {
-        Error {
-            pos,
-            unexpected,
-            expected,
-        }
-    }
-}
-
-impl<E: std::fmt::Debug> std::fmt::Display for Error<E> {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(
-            f,
-            "unexpected {:?}. expected {:?} at {}",
-            self.unexpected, self.expected, self.pos
-        )
-    }
-}
-
-impl<E: std::fmt::Debug> std::error::Error for Error<E> {}
-
 pub fn scan_with<F, A, B>(f: F) -> ScanWith<F, A, B>
 where
     F: Fn(&mut Stream<A>) -> Result<B, A>,
@@ -68,19 +32,32 @@ where
     ScanWith::new(f)
 }
 
-pub fn any<T: Clone>() -> Any<T> {
+pub fn any<T>() -> Any<T>
+where
+    T: Clone,
+{
     Any::new()
 }
 
-pub fn value<T: Clone, I>(x: T) -> Value<T, I> {
+pub fn value<T, I>(x: T) -> Value<T, I>
+where
+    T: Clone,
+{
     Value::new(x)
 }
 
-pub fn eof<T: Clone>() -> Eof<T> {
+pub fn eof<T>() -> Eof<T>
+where
+    T: Clone,
+{
     Eof::new()
 }
 
-pub fn expect<T: Clone, F: Fn(&T) -> bool>(f: F) -> Expect<T, F> {
+pub fn expect<T, F>(f: F) -> Expect<T, F>
+where
+    T: Clone,
+    F: Fn(&T) -> bool,
+{
     Expect::new(f)
 }
 
@@ -88,7 +65,10 @@ pub fn fail<A: Clone, B>() -> Fail<A, B> {
     Fail::new()
 }
 
-pub fn token<A: Clone + PartialEq>(a: A) -> Token<A> {
+pub fn token<A>(a: A) -> Token<A>
+where
+    A: Clone + PartialEq,
+{
     Token::new(a)
 }
 

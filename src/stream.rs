@@ -49,7 +49,7 @@ impl<T> Iterator for Stream<T> {
 
 impl<T> std::fmt::Debug for Stream<T> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        f.debug_struct("Stream")
+        f.debug_struct("stream")
             .field("pos", &self.1)
             .field("len", &self.0.len())
             .finish()

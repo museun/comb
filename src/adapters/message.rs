@@ -8,6 +8,7 @@ impl<A: Scanner> Message<A> {
         Self(a, msg)
     }
 }
+
 impl<A: Scanner> Scanner for Message<A>
 where
     A::Input: Clone,

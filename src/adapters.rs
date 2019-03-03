@@ -9,22 +9,22 @@ macro_rules! export {
 
 export!(
     and,      //
+    any,      //
     attempt,  //
-    either, //
+    either,   //
+    eof,      //
+    expect,   //
+    fail,     //
     many,     //
     map,      //
     message,  //
     optional, //
     or,       //
+    scanwith, //
     skip,     //
     then,     //
-    value,    //
-    with,     //
-    any,      //
-    eof,      //
-    expect,   //
-    fail,     //
-    scanwith, //
     token,    //
     tokens,   //
+    value,    //
+    with,     //
 );

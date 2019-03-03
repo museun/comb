@@ -1,4 +1,3 @@
-use crate::stream::Stream;
 use crate::*;
 
 pub trait Scanner {
