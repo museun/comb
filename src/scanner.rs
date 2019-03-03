@@ -27,7 +27,7 @@ pub trait Scanner {
     fn and<T>(self, x: T) -> And<Self, T>
     where
         Self: Sized,
-        T: Scanner<Input = Self::Input, Output = Self::Output>,
+        T: Scanner<Input = Self::Input>,
     {
         And::new(self, x)
     }
