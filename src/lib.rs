@@ -5,6 +5,7 @@ mod scanner;
 pub use self::scanner::Scanner;
 
 pub mod adapters;
+pub use Either::{Left, Right};
 
 pub(crate) use self::adapters::*;
 
