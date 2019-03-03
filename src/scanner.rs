@@ -64,7 +64,22 @@ pub trait Scanner {
         Many::new(self)
     }
 
-    // TODO: with, val, many1, many_n
+    fn with<T>(self, x: T) -> With<Self, T>
+    where
+        Self: Sized,
+        T: Scanner<Input = Self::Input>,
+    {
+        With::new(self, x)
+    }
+
+    fn value<T: Clone>(self, x: T) -> With<Self, Value<T, Self::Input>>
+    where
+        Self: Sized,
+    {
+        self.with(crate::value(x))
+    }
+
+    // TODO many1, many_n
 }
 
 impl<A: Scanner> Scanner for Box<A> {

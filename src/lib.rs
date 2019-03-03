@@ -11,6 +11,8 @@ mod optional;
 mod or;
 mod skip;
 mod then;
+mod value;
+mod with;
 
 mod any;
 mod eof;
@@ -28,6 +30,8 @@ pub mod adapters {
     pub use super::or::*;
     pub use super::skip::*;
     pub use super::then::*;
+    pub use super::value::*;
+    pub use super::with::*;
 
     pub use super::any::*;
     pub use super::eof::*;
@@ -40,7 +44,7 @@ pub mod adapters {
 
 #[macro_export]
 macro_rules! or  {
-    ($e:expr) => {
+    ($x:expr) => {
         $x
     };
     ($x:expr, $($xs:tt)+) => {
@@ -96,6 +100,10 @@ where
 
 pub fn any<T: Clone>() -> self::adapters::Any<T> {
     self::adapters::Any::new()
+}
+
+pub fn value<T: Clone, I>(x: T) -> self::adapters::Value<T, I> {
+    self::adapters::Value::new(x)
 }
 
 pub fn eof<T: Clone>() -> self::adapters::Eof<T> {
