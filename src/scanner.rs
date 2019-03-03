@@ -100,9 +100,12 @@ pub trait Scanner {
         Message::new(self, msg)
     }
 
-    // need a:
-    // message
-    // error
+    fn attempt(self) -> Attempt<Self>
+    where
+        Self: Sized,
+    {
+        Attempt::new(self)
+    }
 }
 
 impl<A: Scanner> Scanner for Box<A> {

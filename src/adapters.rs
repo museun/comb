@@ -9,6 +9,7 @@ macro_rules! export {
 
 export!(
     and,      //
+    attempt,  //
     many,     //
     map,      //
     message,  //
