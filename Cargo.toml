@@ -3,5 +3,7 @@ name = "comb"
 version = "0.1.1"
 authors = ["museun <museun@outlook.com>"]
 edition = "2018"
+license = "0BSD"
+description = "an unfinished parser combinator library"
 
 [dependencies]
