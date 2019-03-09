@@ -112,8 +112,9 @@ pub trait Scanner {
     }
 
     /// Produces an error message at this point in the sequence
-    fn message(self, msg: Expected<Self::Input>) -> Message<Self>
+    fn message<E>(self, msg: E) -> Message<Self>
     where
+        E: Into<MessageKind<Self::Input>>,
         Self: Sized,
         Self::Input: Clone,
     {

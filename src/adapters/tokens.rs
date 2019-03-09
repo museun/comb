@@ -16,22 +16,18 @@ impl<A: Clone + PartialEq> Scanner for Tokens<A> {
     fn scan(&self, stream: &mut Stream<Self::Input>) -> Res<Self> {
         let mut list = vec![];
         for item in self.0.iter() {
-            let res = stream
-                .peek()
-                .ok_or_else(|| Error::new(stream.pos(), None, Expected::Token(item.clone())))?;
-
-            if item.clone() == res {
+            let val = crate::must_peek(stream)?;
+            if item == &val {
                 stream.next();
-                list.push(res);
-            } else {
-                return Err(Error::new(
-                    stream.pos(),
-                    Some(res),
-                    Expected::Token(item.clone()),
-                ));
+                list.push(val);
+                continue;
             }
+            let err = ErrorBuilder::new(stream.pos())
+                .expected(item.clone())
+                .unexpected(val.clone())
+                .build();
+            return Err(err);
         }
-
         Ok(list)
     }
 }

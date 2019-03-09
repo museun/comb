@@ -16,9 +16,13 @@ impl<T: Clone> Scanner for End<T> {
 
     fn scan(&self, stream: &mut Stream<Self::Input>) -> Res<Self> {
         if let Some(tok) = stream.peek() {
-            Err(Error::new(stream.pos(), Some(tok), Expected::End))
-        } else {
-            Ok(())
+            let err = ErrorBuilder::new(stream.pos())
+                .expected(ExpectedKind::End)
+                .unexpected(tok)
+                .build();
+            return Err(err);
         }
+
+        Ok(())
     }
 }

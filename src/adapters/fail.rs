@@ -15,10 +15,7 @@ impl<A: Clone, B> Scanner for Fail<A, B> {
     type Output = B;
 
     fn scan(&self, stream: &mut Stream<Self::Input>) -> Res<Self> {
-        Err(Error::new(
-            stream.pos(),
-            stream.peek().map(Some).unwrap_or_else(|| None),
-            Expected::Unknown,
-        ))
+        let _val = must_peek(stream)?; // consume 1 element
+        Err(ErrorBuilder::new(stream.pos()).build())
     }
 }

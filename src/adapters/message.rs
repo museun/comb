@@ -1,11 +1,31 @@
 use crate::*;
 
 #[derive(Debug, Clone)]
-pub struct Message<A: Scanner>(A, Expected<A::Input>);
+pub enum MessageKind<E: Clone> {
+    Expected(ExpectedKind<E>),
+    String(String),
+}
 
-impl<A: Scanner> Message<A> {
-    pub(crate) fn new(a: A, msg: Expected<A::Input>) -> Self {
-        Self(a, msg)
+impl<E: Clone> From<&str> for MessageKind<E> {
+    fn from(s: &str) -> Self {
+        MessageKind::String(s.to_string())
+    }
+}
+
+#[derive(Debug, Clone)]
+pub struct Message<A: Scanner>(A, MessageKind<A::Input>)
+where
+    A::Input: Clone;
+
+impl<A: Scanner> Message<A>
+where
+    A::Input: Clone,
+{
+    pub(crate) fn new<M>(a: A, msg: M) -> Self
+    where
+        M: Into<MessageKind<A::Input>>,
+    {
+        Self(a, msg.into())
     }
 }
 
@@ -18,7 +38,14 @@ where
 
     fn scan(&self, stream: &mut Stream<Self::Input>) -> Res<Self> {
         self.0.scan(stream).map_err(|mut err| {
-            err.expected = self.1.clone();
+            match &self.1 {
+                MessageKind::Expected(e) => {
+                    err.expected = Some(e.clone());
+                }
+                MessageKind::String(s) => {
+                    err.msg = Some(s.clone());
+                }
+            }
             err
         })
     }

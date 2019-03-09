@@ -1,6 +1,7 @@
 use crate::*;
 use std::marker::PhantomData;
 
+// TODO provide a ToExpected trait so this can describe what 'f' does
 pub struct Expect<T, F>(F, PhantomData<T>)
 where
     T: Clone,
@@ -25,15 +26,13 @@ where
     type Output = T;
 
     fn scan(&self, stream: &mut Stream<Self::Input>) -> Res<Self> {
-        let val = stream
-            .peek()
-            .ok_or_else(|| Error::new(stream.pos(), None, Expected::Unknown))?;
-
+        let val = crate::must_peek(stream)?;
         if self.0(&val) {
             stream.next();
-            Ok(val)
-        } else {
-            Err(Error::new(stream.pos(), Some(val), Expected::Unknown))
+            return Ok(val);
         }
+
+        let err = ErrorBuilder::new(stream.pos()).unexpected(val).build();
+        Err(err)
     }
 }

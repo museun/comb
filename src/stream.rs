@@ -64,3 +64,9 @@ impl<T> std::fmt::Debug for Stream<T> {
             .finish()
     }
 }
+
+impl From<&str> for Stream<char> {
+    fn from(s: &str) -> Self {
+        Stream::new(s.chars())
+    }
+}

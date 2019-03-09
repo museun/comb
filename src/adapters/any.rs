@@ -15,9 +15,7 @@ impl<T: Clone> Scanner for Any<T> {
     type Output = T;
 
     fn scan(&self, stream: &mut Stream<Self::Input>) -> Res<Self> {
-        let val = stream
-            .peek()
-            .ok_or_else(|| Error::new(stream.pos(), None, Expected::Any))?;
+        let val = crate::must_peek(stream)?;
         stream.next();
         Ok(val)
     }
