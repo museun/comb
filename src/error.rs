@@ -35,7 +35,7 @@ where
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Error<L, R> {
     pub pos: usize,
     pub expected: Option<ExpectedKind<L>>,
@@ -105,8 +105,8 @@ impl<L, R> ErrorBuilder<L, R> {
 
 impl<L, R> Display for Error<L, R>
 where
-    L: Display,
-    R: Display,
+    L: Display + Clone,
+    R: Display + Clone,
 {
     fn fmt(&self, f: &mut Formatter<'_>) -> FmtResult {
         if let Some(e) = &self.expected {
@@ -129,7 +129,7 @@ where
 
 impl<L, R> std::error::Error for Error<L, R>
 where
-    L: Display + Debug,
-    R: Display + Debug,
+    L: Display + Debug + Clone,
+    R: Display + Debug + Clone,
 {
 }

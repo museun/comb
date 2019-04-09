@@ -74,6 +74,8 @@ pub trait Scanner {
     fn many(self) -> Many<Self>
     where
         Self: Sized,
+        Self::Input: std::fmt::Debug,
+        Self::Output: std::fmt::Debug,
     {
         Many::new(self, None, None)
     }
@@ -82,6 +84,8 @@ pub trait Scanner {
     fn many1(self) -> Many<Self>
     where
         Self: Sized,
+        Self::Input: std::fmt::Debug,
+        Self::Output: std::fmt::Debug,
     {
         Many::new(self, Some(1), None)
     }
@@ -90,6 +94,8 @@ pub trait Scanner {
     fn many_n(self, n: usize) -> Many<Self>
     where
         Self: Sized,
+        Self::Input: std::fmt::Debug,
+        Self::Output: std::fmt::Debug,
     {
         Many::new(self, Some(n), Some(n))
     }

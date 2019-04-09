@@ -3,12 +3,19 @@ use crate::*;
 #[derive(Debug, Clone)]
 pub enum MessageKind<E: Clone> {
     Expected(ExpectedKind<E>),
+    Error(crate::Error<E, E>),
     String(String),
 }
 
 impl<E: Clone> From<&str> for MessageKind<E> {
     fn from(s: &str) -> Self {
         MessageKind::String(s.to_string())
+    }
+}
+
+impl<E: Clone> From<String> for MessageKind<E> {
+    fn from(s: String) -> Self {
+        MessageKind::String(s)
     }
 }
 
@@ -44,6 +51,9 @@ where
                 }
                 MessageKind::String(s) => {
                     err.msg = Some(s.clone());
+                }
+                MessageKind::Error(e) => {
+                    err = e.clone();
                 }
             }
             err

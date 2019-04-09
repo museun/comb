@@ -154,22 +154,26 @@ pub fn letter() -> impl Scanner<Input = char, Output = char> {
     range('a'..'z').or(range('A'..'Z'))
 }
 
-pub fn number<I>(iter: I) -> Result<u64, char>
+#[derive(Debug, Clone, Copy)]
+pub enum NumberWidth {
+    W8,
+    W16,
+    W32,
+    W64,
+    W128,
+    WSize,
+}
+
+pub fn number<T>() -> impl Scanner<Input = char, Output = T>
 where
-    I: IntoIterator<Item = char>,
+    T: std::str::FromStr + Clone,
+    T::Err: std::fmt::Display,
 {
-    let mut out = 0;
-    for (i, digit) in iter.into_iter().enumerate() {
-        if digit.is_ascii_digit() {
-            if let Some(d) = digit.to_digit(10).map(u64::from) {
-                out = 10 * out + d;
-                continue;
-            }
-        }
-        let err = ErrorBuilder::new(i)
-            .message(format!("invalid digit: {}", digit))
-            .build();
-        return Err(err);
-    }
-    Ok(out)
+    digit()
+        .many1()
+        .map(|d| d.into_iter().collect::<String>().parse::<T>())
+        .then(|x| match x {
+            Ok(d) => Either::Right(value(d)),
+            Err(err) => Either::Left(fail().message(format!("invalid number: {}", err))),
+        })
 }
